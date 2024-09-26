@@ -1,14 +1,19 @@
+import './CourseCards.css';
+
 const CourseList = ({ courses }) => (
-    <ul>
-      {Object.entries(courses).map(([code, course]) => (
-        
-          <h2>
-            {course.term} CS {course.number}: {course.title}
-          </h2>
-    
-      ))}
-    </ul>
-  );
-  
-  export default CourseList;
-  
+  <div className='course-list'>
+    {Object.entries(courses).map(([code, course]) => (
+        <div className='course-card' key={code}>
+            <div className='course-info'>
+                {course.term} CS {course.number}: {course.title}
+            </div>
+            <div className='divider'></div> 
+            <div className='course-meets'>
+                {course.meets}
+            </div>
+        </div>
+    ))}
+  </div>
+);
+
+export default CourseList;
