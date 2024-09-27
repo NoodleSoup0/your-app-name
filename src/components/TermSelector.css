@@ -1,0 +1,15 @@
+.term-button {
+    border-radius: 8px; /* Rounded corners */
+    color: navy; /* Navy font color */
+    background: transparent; /* Transparent background */
+    border: 2px solid navy; /* Navy border */
+    padding: 10px 20px; /* Padding for better spacing */
+    margin: 0 5px; /* Margin between buttons */
+    cursor: pointer; /* Change cursor to pointer */
+    font-weight: normal; /* Normal weight by default */
+  }
+  
+  .term-button.selected {
+    font-weight: bold; /* Bold weight for selected term */
+  }
+  
