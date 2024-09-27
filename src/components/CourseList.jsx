@@ -1,4 +1,3 @@
-// CourseList.jsx
 import React from 'react';
 import './CourseCards.css';
 

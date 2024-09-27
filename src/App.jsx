@@ -60,11 +60,14 @@ const App = () => {
           {error && <h1>Error loading courses: {error.message}</h1>}
           {data && <Banner title={data.title}/>}
           <div>
-            <h1>Course Selection</h1>
+            <h3>Course Selection</h3>
             <TermSelector selectedTerm={selectedTerm} onSelectTerm={handleSelectTerm} />
           </div>
-          {data && <CoursePage courses={data.courses} selectedTerm = {selectedTerm}/>}
+          
         </header>
+        <div className = "body">
+          {data && <CoursePage courses={data.courses} selectedTerm = {selectedTerm}/>}
+        </div>
       </div>
       
     </QueryClientProvider>
