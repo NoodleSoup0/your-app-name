@@ -14,14 +14,14 @@ const CoursePage = ({ courses , selectedTerm }) => {
   };
 
   return (
-    <div>
-      <CourseList 
-        courses={courses} 
-        selectedCourses={selectedCourses} 
-        selectedTerm={selectedTerm}
-        toggleSelected={toggleSelected} 
-      />
-    </div>
+    
+    <CourseList 
+      courses={courses} 
+      selectedCourses={selectedCourses} 
+      selectedTerm={selectedTerm}
+      toggleSelected={toggleSelected} 
+    />
+   
   );
 };
 
