@@ -5,6 +5,7 @@ import CourseList from './components/CourseList';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useJsonQuery } from './utilities/fetch.js';
 import TermSelector from './components/TermSelector.jsx';
+import CoursePage from './components/CoursePage.jsx';
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,12 @@ const Main = ({ setData, setLoading, setError }) => {
   return null; 
 };
 
+const toggleSelected = (course) => {
+  setSelected(selected.includes(course)
+    ? selected.filter(x => x !== course)
+    : [...selected, course]
+  );
+};
 
 const App = () => {
   const [data, setData] = useState(null);
@@ -31,6 +38,7 @@ const App = () => {
   const [error, setError] = useState(null);
 
   const [selectedTerm, setSelectedTerm] = useState('Fall');
+  const [selected, setSelected] = useState([]);
 
   const handleSelectTerm = (term) => {
     setSelectedTerm(term);
@@ -55,7 +63,7 @@ const App = () => {
             <h1>Course Selection</h1>
             <TermSelector selectedTerm={selectedTerm} onSelectTerm={handleSelectTerm} />
           </div>
-          {data && <CourseList courses={data.courses} selectedTerm={selectedTerm}/>}
+          {data && <CoursePage courses={data.courses} selectedTerm = {selectedTerm}/>}
         </header>
       </div>
       

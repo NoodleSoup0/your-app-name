@@ -35,4 +35,9 @@
     height: 1px; 
     background-color: navy; 
   }
+
+  .course-card.selected {
+    border-color: navy; 
+    background-color: #e0e7ff; 
+  }
   
