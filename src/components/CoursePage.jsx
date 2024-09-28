@@ -1,67 +1,86 @@
 import React, { useState } from 'react';
 import CourseList from './CourseList';
 import Modal from './Modal';
+import CourseEditor from '../pages/CourseEditor';
 import './CoursePage.css';
 import { hasConflict } from '../utilities/dateUtils';
 
 const CoursePage = ({ courses, selectedTerm }) => {
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPlanningModalOpen, setIsPlanningModalOpen] = useState(false);
+  const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
+  const [currentCourse, setCurrentCourse] = useState(null);
 
   const toggleSelected = (course) => {
-      if (selectedCourses.includes(course)) {
-          // Unselect the course
-          setSelectedCourses((prevSelected) => 
-              prevSelected.filter((x) => x !== course)
-          );
-      } else if (!hasConflict(course, selectedCourses)) {
-          // Select the course if there is no conflict
-          setSelectedCourses((prevSelected) => [...prevSelected, course]);
-      }
+    if (selectedCourses.includes(course)) {
+      setSelectedCourses((prevSelected) => 
+        prevSelected.filter((x) => x !== course)
+      );
+    } else if (!hasConflict(course, selectedCourses)) {
+      setSelectedCourses((prevSelected) => [...prevSelected, course]);
+    }
   };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openPlanningModal = () => setIsPlanningModalOpen(true);
+  const closePlanningModal = () => setIsPlanningModalOpen(false);
+
+  const openCourseModal = (course) => {
+    setCurrentCourse(course);
+    setIsCourseModalOpen(true);
+  };
+
+  const closeCourseModal = () => {
+    setIsCourseModalOpen(false);
+    setCurrentCourse(null);
+  };
 
   return (
-      <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-              </div>
-              <button onClick={openModal} className="modal-button" style={{ marginLeft: 'auto' }}>
-                  Course Plan
-              </button>
-          </div>
-          <CourseList
-              courses={courses}
-              selectedCourses={selectedCourses}
-              selectedTerm={selectedTerm}
-              toggleSelected={toggleSelected}
-          />
-          
-          <Modal open={isModalOpen} close={closeModal}>
-        {selectedCourses.length > 0 ? (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>Course Management</h1>
+        <button onClick={openPlanningModal} className="modal-button" style={{ marginLeft: 'auto' }}>
+          <i className="fas fa-calendar-alt" style={{ marginRight: '5px' }}></i>
+          Course Plan
+        </button>
+      </div>
+      <CourseList
+        courses={courses}
+        selectedCourses={selectedCourses}
+        selectedTerm={selectedTerm}
+        toggleSelected={toggleSelected}
+        openCourseModal={openCourseModal}
+      />
+
+      {/* Planning Modal */}
+      {isPlanningModalOpen && (
+        <Modal open={isPlanningModalOpen} close={closePlanningModal}>
           <div>
             <h2>Your Selected Courses</h2>
             <ul>
               {selectedCourses.map((course) => (
-                <div key={course.code}>
+                <li key={course.code}>
                   {course.term} CS {course.number}: {course.title} ({course.meets})
-                </div>
+                  {/* <button onClick={() => openCourseModal(course)}>Edit</button> */}
+                </li>
               ))}
             </ul>
-            <button onClick={closeModal} className="modal-button">Close</button>
+            <button onClick={closePlanningModal} className="modal-button">Close</button>
           </div>
-        ) : (
+        </Modal>
+      )}
+
+      {/* Course Details Modal */}
+      {isCourseModalOpen && currentCourse && (
+        <Modal open={isCourseModalOpen} close={closeCourseModal}>
           <div>
-            <h2>No Courses Selected</h2>
-            <p>Please select courses to view your course plan.</p>
-            <button onClick={closeModal} className="modal-button">Close</button>
+            <h2>Edit Course Details</h2>
+            <CourseEditor course={currentCourse} onClose={closeCourseModal} />
           </div>
-        )}
-      </Modal>
+        </Modal>
+      )}
     </div>
   );
 };
 
 export default CoursePage;
+
