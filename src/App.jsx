@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Banner from './components/Banner';
 import CourseList from './components/CourseList';
@@ -6,21 +6,26 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useJsonQuery } from './utilities/fetch.js';
 import TermSelector from './components/TermSelector.jsx';
 import CoursePage from './components/CoursePage.jsx';
+import { database } from './utilities/firebase.js';
+import { ref, onValue } from 'firebase/database'; 
 
 const queryClient = new QueryClient();
 
 const Main = ({ setData, setLoading, setError }) => {
-  const [data, isLoading, error] = useJsonQuery('https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php');
+  useEffect(() => {
+    const dbRef = ref(database); 
+    setLoading(true);
+    const unsubscribe = onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      setData(data);
+      setLoading(false);
+    }, (error) => {
+      setError(error);
+      setLoading(false);
+    });
 
-  // Update the states 
-  React.useEffect(() => {
-    setData(data);
-    setLoading(isLoading);
-    setError(error);
-  }, [data, isLoading, error, setData, setLoading, setError]);
-
-  if (error) return <h1>Error loading course data: {error.message}</h1>;
-  if (isLoading) return <h1>Loading course data...</h1>;
+    return () => unsubscribe(); 
+  }, [setData, setLoading, setError]);
 
   return null; 
 };
