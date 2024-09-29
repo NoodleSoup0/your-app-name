@@ -38,15 +38,40 @@ const makeResult = (error) => {
   return { timestamp, error, message };
 };
 
+// export const useDbUpdate = (path, value) => {
+//   const [result, setResult] = useState();
+//   const updateData = useCallback((value) => {
+//     console.log('values', value)
+//     update(ref(database, path), value)
+//     .then(() => setResult(makeResult()))
+//     .catch((error) => setResult(makeResult(error)))
+//   }, [database, path]);
+
+//   return [updateData, result];
+// };
+
 export const useDbUpdate = (path) => {
-  const [result, setResult] = useState();
-  const updateData = useCallback((value) => {
-    update(ref(database, path), value)
-    .then(() => setResult(makeResult()))
-    .catch((error) => setResult(makeResult(error)))
-  }, [database, path]);
+    const [result, setResult] = useState();
+    const updateData = useCallback((value) => {
+      console.log('Updating path:', path);
+      console.log('Value before update:', value);
+  
+      if (!value || typeof value !== 'object') {
+        console.error("Invalid value passed to updateData:", value);
+        return;
+      }
+  
+      const dbRef = ref(database, path);
+      update(dbRef, value)
+        .then(() => setResult(makeResult()))
+        .catch((error) => {
+          console.error("Error during Firebase update:", error);
+          setResult(makeResult(error));
+        });
+    }, [database, path]);
+  
+    return [updateData, result];
+  };
 
-  return [updateData, result];
-};
-
+  
 export { firebase, database };

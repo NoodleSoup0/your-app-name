@@ -11,21 +11,26 @@ const CoursePage = ({ courses, selectedTerm }) => {
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
   const [currentCourse, setCurrentCourse] = useState(null);
 
-  const toggleSelected = (course) => {
-    if (selectedCourses.includes(course)) {
+  // Toggle selected courses, now passing courseKey (code) and courseData
+  const toggleSelected = (courseKey, courseData) => {
+    const courseWithKey = { ...courseData, id: courseKey }; // Include key with course data
+
+    if (selectedCourses.some(c => c.id === courseKey)) {
       setSelectedCourses((prevSelected) => 
-        prevSelected.filter((x) => x !== course)
+        prevSelected.filter((x) => x.id !== courseKey)
       );
-    } else if (!hasConflict(course, selectedCourses)) {
-      setSelectedCourses((prevSelected) => [...prevSelected, course]);
+    } else if (!hasConflict(courseWithKey, selectedCourses)) {
+      setSelectedCourses((prevSelected) => [...prevSelected, courseWithKey]);
     }
   };
 
   const openPlanningModal = () => setIsPlanningModalOpen(true);
   const closePlanningModal = () => setIsPlanningModalOpen(false);
 
-  const openCourseModal = (course) => {
-    setCurrentCourse(course);
+  // Open Course Modal with courseKey and courseData
+  const openCourseModal = (courseKey, courseData) => {
+    console.log('Selected Course:', courseData);
+    setCurrentCourse({ ...courseData, id: courseKey });
     setIsCourseModalOpen(true);
   };
 
@@ -47,7 +52,7 @@ const CoursePage = ({ courses, selectedTerm }) => {
         courses={courses}
         selectedCourses={selectedCourses}
         selectedTerm={selectedTerm}
-        toggleSelected={toggleSelected}
+        toggleSelected={toggleSelected} 
         openCourseModal={openCourseModal}
       />
 
@@ -58,9 +63,8 @@ const CoursePage = ({ courses, selectedTerm }) => {
             <h2>Your Selected Courses</h2>
             <ul>
               {selectedCourses.map((course) => (
-                <li key={course.code}>
+                <li key={course.id}> 
                   {course.term} CS {course.number}: {course.title} ({course.meets})
-                  {/* <button onClick={() => openCourseModal(course)}>Edit</button> */}
                 </li>
               ))}
             </ul>
@@ -74,7 +78,7 @@ const CoursePage = ({ courses, selectedTerm }) => {
         <Modal open={isCourseModalOpen} close={closeCourseModal}>
           <div>
             <h2>Edit Course Details</h2>
-            <CourseEditor course={currentCourse} onClose={closeCourseModal} />
+            <CourseEditor course={currentCourse} courseId={currentCourse.id} onClose={closeCourseModal} />
           </div>
         </Modal>
       )}
@@ -83,4 +87,3 @@ const CoursePage = ({ courses, selectedTerm }) => {
 };
 
 export default CoursePage;
-

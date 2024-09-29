@@ -1,16 +1,14 @@
 import React from 'react';
 import { useFormData } from '../utilities/useFormData';
-import './CourseEditor.css'
+import { useDbUpdate } from '../utilities/firebase'; // Import the useDbUpdate hook
+import './CourseEditor.css';
 
 const validateCourseData = (key, val) => {
   switch (key) {
     case 'title':
       return val.length >= 2 ? '' : 'must be at least two characters';
     case 'meets':
-      const regex = /^(M|Tu|W|Th|F|Sa|Su){1,3} \d{1,2}:\d{2}-\d{1,2}:\d{2}$/
-
-
-
+      const regex = /^(M|Tu|W|Th|F|Sa|Su){1,3} \d{1,2}:\d{2}-\d{1,2}:\d{2}$/;
       return val === '' || regex.test(val) ? '' : 'must contain days and start-end, e.g., MWF 12:00-13:20';
     default:
       return '';
@@ -31,7 +29,6 @@ const InputField = ({ name, label, state, change }) => (
   </div>
 );
 
-
 const ButtonBar = ({ onCancel }) => (
   <div>
     <button type="button" className="button" onClick={onCancel}>Cancel</button>
@@ -40,17 +37,36 @@ const ButtonBar = ({ onCancel }) => (
 );
 
 const CourseEditor = ({ course, onClose }) => {
-  const [formState, change] = useFormData(validateCourseData, course);
+  if (!course) {
+    return <div>Loading...</div>;
+  }
 
-  const submit = (evt) => {
+  const [formState, change] = useFormData(validateCourseData, course);
+  const [updateCourse, result] = useDbUpdate(`courses/${course.id}`);
+
+  const submit = async (evt) => {
     evt.preventDefault();
-    if (Object.keys(formState.errors).length === 0) {
-      console.log('Form submitted:', formState.values);
-      // Uncomment the next line to perform the update
-      // update(`/courses/${course.code}`, formState.values);
-      onClose(); // Call onClose to close the modal after saving
+
+    const errors = formState.errors || {};
+
+    console.log("if statement", Object.keys(errors).length === 0);
+
+    if (Object.keys(errors).length === 0) {
+      const hasChanged = Object.keys(formState.values).some(key => formState.values[key] !== course[key]);
+      console.log('hasChanged', hasChanged);
+
+      if (hasChanged) {
+        try {
+          await updateCourse(formState.values); // Update the course data in Firebase
+          console.log('Form submitted:', formState.values);
+          onClose(); // Close the modal after saving
+        } catch (error) {
+          console.error("Error saving data:", error);
+        }
+      } else {
+        console.log('No changes to submit.');
+      }
     }
-    onClose(); 
   };
 
   return (
@@ -60,6 +76,8 @@ const CourseEditor = ({ course, onClose }) => {
       <InputField name="title" label="Title" state={formState} change={change} />
       <InputField name="meets" label="Meeting Times" state={formState} change={change} />
       <ButtonBar onCancel={onClose} />
+      {result && result.error && <div className="alert alert-danger">{result.message}</div>}
+      {result && !result.error && <div className="alert alert-success">{result.message}</div>}
     </form>
   );
 };

@@ -11,7 +11,7 @@ const CourseList = ({ courses, selectedCourses, selectedTerm, toggleSelected, op
   return (
     <div className='course-list'>
       {filteredCourses.map(([code, course]) => {
-        const isSelected = selectedCourses.includes(course);
+        const isSelected = selectedCourses.some(c => c.id === code); // Check by course key
         const isConflicted = selectedCourses.some(selectedCourse =>
           selectedCourse.term === course.term &&
           timesOverlap(selectedCourse.meets, course.meets)
@@ -24,7 +24,7 @@ const CourseList = ({ courses, selectedCourses, selectedTerm, toggleSelected, op
           <div
             className={className}
             key={code}
-            onClick={() => !isConflicted && toggleSelected(course)}
+            onClick={() => !isConflicted && toggleSelected(code, course)} // Pass both key and course data
           >
             <div className='course-info'>
               {course.term} CS {course.number}: {course.title}
@@ -38,7 +38,7 @@ const CourseList = ({ courses, selectedCourses, selectedTerm, toggleSelected, op
             {/* Edit Button to open Course Details Modal */}
             <button className="button" onClick={(e) => {
               e.stopPropagation(); // Prevent the card click event
-              openCourseModal(course); 
+              openCourseModal(code, course);  // Pass both key and course data to the modal
             }}>
               Edit
             </button>
