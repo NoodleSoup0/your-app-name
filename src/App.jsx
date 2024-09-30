@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Banner from './components/Banner';
-import CourseList from './components/CourseList';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useJsonQuery } from './utilities/fetch.js';
 import TermSelector from './components/TermSelector.jsx';
 import CoursePage from './components/CoursePage.jsx';
 import { database } from './utilities/firebase.js';
 import { ref, onValue } from 'firebase/database'; 
+import { HashRouter } from 'react-router-dom';
+import Navigation from './components/Navigation.jsx';
 
 const queryClient = new QueryClient();
 
@@ -51,15 +51,13 @@ const App = () => {
 
 
   return (
-    
+    <HashRouter>
     <QueryClientProvider client={queryClient}>
       <div className="App">
         <header className="App-header">
-          
+          <Navigation/>
 
           <Main setData={setData} setLoading={setLoading} setError={setError} />
-
-          
 
           {isLoading && <h1>Loading courses...</h1>}
           {error && <h1>Error loading courses: {error.message}</h1>}
@@ -76,6 +74,7 @@ const App = () => {
       </div>
       
     </QueryClientProvider>
+    </HashRouter>
   );
 };
 

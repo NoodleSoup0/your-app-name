@@ -1,8 +1,12 @@
 import React from 'react';
 import './CourseList.css';
 import { timesOverlap } from '../utilities/dateUtils';
+import { useAuthState } from '../utilities/firebase'; // Import useAuthState
 
 const CourseList = ({ courses, selectedCourses, selectedTerm, toggleSelected, openCourseModal }) => {
+  // Use the custom hook to get the authenticated user
+  const [user] = useAuthState(); // Get the current user state
+
   // Filter courses based on the selected term
   const filteredCourses = Object.entries(courses).filter(
     ([code, course]) => course.term === selectedTerm
@@ -36,12 +40,14 @@ const CourseList = ({ courses, selectedCourses, selectedTerm, toggleSelected, op
               {course.meets}
             </div>
             {/* Edit Button to open Course Details Modal */}
-            <button className="button" onClick={(e) => {
-              e.stopPropagation(); // Prevent the card click event
-              openCourseModal(code, course);  // Pass both key and course data to the modal
-            }}>
-              Edit
-            </button>
+            {user && ( // Show button only if user is signed in
+              <button className="button" onClick={(e) => {
+                e.stopPropagation(); // Prevent the card click event
+                openCourseModal(code, course);  // Pass both key and course data to the modal
+              }}>
+                Edit
+              </button>
+            )}
           </div>
         );
       })}
