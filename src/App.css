@@ -46,3 +46,14 @@ button {
   font-size: calc(10px + 2vmin);
   color: navy;
 }
+
+.modal-button {
+  border-radius: 8px; 
+  color: navy; 
+  background: transparent;
+  border: 2px solid navy; 
+  padding: 10px 20px; 
+  margin: 0 5px; 
+  cursor: pointer; 
+  font-weight: normal; 
+}

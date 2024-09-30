@@ -1,4 +1,4 @@
-import { getDatabase, onValue, ref, update } from 'firebase/database';
+import { getDatabase, onValue, ref, update, get } from 'firebase/database';
 import { useCallback, useEffect, useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
@@ -17,7 +17,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebase = initializeApp(firebaseConfig);
 const database = getDatabase(firebase);
-const auth = getAuth(firebase); // Get the auth instance
+const auth = getAuth(firebase);
 
 export const useDbData = (path) => {
     const [data, setData] = useState();
@@ -79,4 +79,14 @@ export const useAuthState = () => {
     ), []);
 
     return [user];
+};
+
+export const isAdmin = (uid) => {
+  console.log('isAdmin uid', uid)
+  const dbRef = ref(database, `admins/${uid}`);
+  return new Promise((resolve, reject) => {
+    onValue(dbRef, (snapshot) => {
+      resolve(snapshot.exists()); 
+    }, reject);
+  });
 };

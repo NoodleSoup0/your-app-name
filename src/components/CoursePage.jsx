@@ -5,9 +5,8 @@ import CourseEditor from '../pages/CourseEditor';
 import './CoursePage.css';
 import { hasConflict } from '../utilities/dateUtils';
 
-const CoursePage = ({ courses, selectedTerm }) => {
+const CoursePage = ({ courses, selectedTerm, openPlanningModal, closePlanningModal, isPlanningModalOpen }) => {
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [isPlanningModalOpen, setIsPlanningModalOpen] = useState(false);
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
   const [currentCourse, setCurrentCourse] = useState(null);
 
@@ -24,10 +23,6 @@ const CoursePage = ({ courses, selectedTerm }) => {
     }
   };
 
-  const openPlanningModal = () => setIsPlanningModalOpen(true);
-  const closePlanningModal = () => setIsPlanningModalOpen(false);
-
-  // Open Course Modal with courseKey and courseData
   const openCourseModal = (courseKey, courseData) => {
     console.log('Selected Course:', courseData);
     setCurrentCourse({ ...courseData, id: courseKey });
@@ -41,13 +36,7 @@ const CoursePage = ({ courses, selectedTerm }) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Course Management</h1>
-        <button onClick={openPlanningModal} className="modal-button" style={{ marginLeft: 'auto' }}>
-          <i className="fas fa-calendar-alt" style={{ marginRight: '5px' }}></i>
-          Course Plan
-        </button>
-      </div>
+      
       <CourseList
         courses={courses}
         selectedCourses={selectedCourses}

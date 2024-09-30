@@ -45,6 +45,11 @@ const App = () => {
   const [selectedTerm, setSelectedTerm] = useState('Fall');
   const [selected, setSelected] = useState([]);
 
+  const [isPlanningModalOpen, setIsPlanningModalOpen] = useState(false);
+
+  const openPlanningModal = () => setIsPlanningModalOpen(true);
+  const closePlanningModal = () => setIsPlanningModalOpen(false);
+
   const handleSelectTerm = (term) => {
     setSelectedTerm(term);
   };
@@ -55,21 +60,41 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <div className="App">
         <header className="App-header">
-          <Navigation/>
 
           <Main setData={setData} setLoading={setLoading} setError={setError} />
 
           {isLoading && <h1>Loading courses...</h1>}
           {error && <h1>Error loading courses: {error.message}</h1>}
+
           {data && <Banner title={data.title}/>}
           <div>
-            <h3>Course Selection</h3>
-            <TermSelector selectedTerm={selectedTerm} onSelectTerm={handleSelectTerm} />
+            <Navigation/>
           </div>
+          <h3>Course Selection</h3>
           
+            
+            
+          <div style={{ display: 'flex'}}>
+            <div>
+              <TermSelector selectedTerm={selectedTerm} onSelectTerm={handleSelectTerm} />
+            </div>
+            <div>
+              <button onClick={openPlanningModal} className="modal-button">
+                <i style={{ marginRight: '5px' }}></i>
+                Course Plan
+              </button>
+            </div>
+            
+          </div>
+
         </header>
         <div className = "body">
-          {data && <CoursePage courses={data.courses} selectedTerm = {selectedTerm}/>}
+          {data && <CoursePage 
+          courses={data.courses} 
+          selectedTerm = {selectedTerm} 
+          openPlanningModal={openPlanningModal} 
+          closePlanningModal={closePlanningModal} 
+          isPlanningModalOpen={isPlanningModalOpen}/>}
         </div>
       </div>
       
